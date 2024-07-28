@@ -18,7 +18,7 @@ from bot import bot, LOGGER, _open, emby_line, sakura_b, ranks, group, extra_emb
 from pyrogram import filters
 from bot.func_helper.emby import emby
 from bot.func_helper.filters import user_in_group_on_filter
-from bot.func_helper.utils import members_info, tem_alluser, cr_link_one
+from bot.func_helper.utils import members_info, tem_alluser, cr_link_one, open_check
 from bot.func_helper.fix_bottons import members_ikb, back_members_ikb, re_create_ikb, del_me_ikb, re_delme_ikb, \
     re_reset_ikb, re_changetg_ikb, emby_block_ikb, user_emby_block_ikb, user_emby_unblock_ikb, re_exchange_b_ikb, \
     store_ikb, re_store_renew, re_bindtg_ikb, close_it_ikb, user_query_page
@@ -100,10 +100,12 @@ async def members(_, call):
     if not data:
         return await callAnswer(call, '⚠️ 数据库没有你，请重新 /start录入', True)
     await callAnswer(call, f"✅ 用户界面")
+    stat, all_user, tem, timing, allow_code = await open_check()
     name, lv, ex, us, embyid, pwd2 = data
     text = f"▎__欢迎进入用户面板！{call.from_user.first_name}__\n\n" \
            f"**· 🆔 用户のID** | `{call.from_user.id}`\n" \
            f"**· 📊 当前状态** | {lv}\n" \
+           f"**· 🚗 剩余车位** | {all_user - tem}\n" \
            f"**· 🍒 积分{sakura_b}** | {us[0]} · {us[1]}\n" \
            f"**· 💠 账号名称** | [{name}](tg://user?id={call.from_user.id})\n" \
            f"**· 🚨 到期时间** | {ex}"
