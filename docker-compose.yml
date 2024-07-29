@@ -2,11 +2,11 @@
 version: '3'
 services:
   mysql:
-    image: mysql:5.7
+    image: mysql:8.4.2-oraclelinux9
     container_name: mysql # 容器名
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci # 设置utf8字符集
     restart: always
-    network_mode: host
+    network_mode: bridge
     environment:
       MYSQL_ROOT_PASSWORD: 123456 # root管理员用户密码
       MYSQL_USER: susu   # 创建需要连接的用户
@@ -15,8 +15,8 @@ services:
       MYSQL_ROOT_HOST: "%" # 所有ip可连接
     ports:
       - '3306:3306'  # host物理直接映射端口为
-    volumes:
-      - /root/Sakura_embyboss/db:/var/lib/mysql
+#    volumes:
+#      - /root/Sakura_embyboss/db:/var/lib/mysql
 
   # 以下 phpmyadmin 主要是为了更为直观的供owner翻阅数据，不影响bot运行，如有其他合适软件，可注释内容 # xxxx
 #  phpmyadmin:
