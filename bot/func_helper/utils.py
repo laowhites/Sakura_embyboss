@@ -71,6 +71,13 @@ async def tem_alluser():
     save_config()
 
 
+async def tem_decrease():
+    if _open.tem <= 0:
+        return
+    _open.tem = _open.tem - 1
+    save_config()
+
+
 from random import choice
 import string
 

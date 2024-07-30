@@ -34,6 +34,7 @@ class Open(BaseModel):
     stat: bool
     all_user: int
     timing: int = 0
+    # 实际有效使用账户
     tem: Optional[int] = 0
     allow_code: StrictBool
 
