@@ -1,40 +1,24 @@
 {
-  "bot_name": "xxxbot",
-  "bot_token": "5701:AAEvAHzsg30",
-  "owner_api": 73711,
-  "owner_hash": "",
-  "owner": xxxxxxx,
+  "bot_name": "timedogbot",
+  "bot_token": "726724onN4al6Xlttqya4qmfk",
+  "owner_api": 26419,
+  "owner_hash": "29dd69cfb4adc0",
+  "owner": 50270,
   "group": [
-    -100xxxxxx
+    -42989
   ],
-  "main_group": "Aaaaa_su",
-  "chanel": "su_yxfy",
-  "bot_photo": "https://telegra.ph/file/3b6cd2a89b652e72e0d3b.png",
-  "admins": [],
-  "invite": "n",
-  "money": "花币",
-  "emby_api": "xxxxx",
-  "emby_url": "http://255.255.255.255:8096",
-  "emby_line": "susuyyds.com",
-  "db_host": "localhost",
-  "db_user": "",
-  "db_pwd": "",
-  "db_name": "",
+  "main_group": "+SsIzU1",
+  "chanel": "",
+  "bot_photo": "https://telegra.ph/file/ac9f9abad364742881a7c.png",
   "user_buy": {
-    "stat": false,
+    "stat": true,
+    "text": false,
     "button": [
       "💰 点击购买",
       "https://google.com",
       "url"
-    ],
-    "text": false
+    ]
   },
-  "emby_block": [
-    "nsfw"
-  ],
-  "extra_emby_libs": [
-    "电视"
-  ],
   "open": {
     "stat": false,
     "all_user": 1000,
@@ -42,42 +26,51 @@
     "tem": 0,
     "allow_code": true,
     "checkin": true,
+    "checkin_duration": 15,
     "exchange": true,
     "whitelist": true,
     "invite": false,
-    "leave_ban": true,
+    "leave_ban": false,
     "uplays": true,
     "exchange_cost": 300,
     "whitelist_cost": 9999,
     "invite_cost": 1000
   },
+  "admins": [],
+  "invite": "n",
+  "money": "花币",
+  "navid_admin_name": "123456",
+  "navid_admin_password": "654321",
+  "navid_url": "http://ez:4533",
+  "navid_line": "embya.xyz",
+  "db_host": "127.0.0.1",
+  "db_user": "root",
+  "db_pwd": "123456",
+  "db_name": "navid",
+  "db_port": 3306,
   "tz_ad": "",
   "tz_api": "",
-  "tz_id": [
-  ],
-  "ranks": {
-    "logo": "SAKURA",
-    "backdrop": false
-  },
-  "schedall": {
-    "dayrank": true,
-    "weekrank": true,
-    "dayplayrank": false,
-    "weekplayrank": false,
+  "tz_id": [],
+  "schedule": {
     "check_ex": true,
     "low_activity": false,
+    "restart_chat_id": 0,
+    "restart_msg_id": 0,
     "backup_db": false
   },
   "db_is_docker": true,
   "db_docker_name": "mysql",
   "db_backup_dir": "./db_backup",
-  "db_backup_maxcount": 7,
-  "w_anti_chanel_ids": [],
+  "db_backup_max_count": 7,
+  "another_line": [],
+  "w_anti_channel_ids": [],
   "proxy": {
-    "scheme": "",
-    "hostname": "",
-    "port": null,
+    "scheme": "socks5",
+    "hostname": "127.0.0.1",
+    "port": 8119,
     "username": "",
     "password": ""
-  }
+  },
+  "kk_gift_days": 30,
+  "fuxx_pitao": true
 }

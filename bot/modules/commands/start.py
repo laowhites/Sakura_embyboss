@@ -1,19 +1,18 @@
 """
 启动面板start命令 返回面ban
 
-+ myinfo 个人数据
++ my_info 个人数据
 + count  服务器媒体数
 """
 import asyncio
 from pyrogram import filters
 
-from bot.func_helper.emby import Embyservice
 from bot.modules.commands.exchange import rgs_code
-from bot.sql_helper.sql_emby import sql_add_emby
+from bot.sql_helper.sql_navid import sql_add_navid
 from bot.func_helper.filters import user_in_group_filter, user_in_group_on_filter
 from bot.func_helper.msg_utils import deleteMessage, sendMessage, sendPhoto, callAnswer, editMessage
 from bot.func_helper.fix_bottons import group_f, judge_start_ikb, judge_group_ikb, cr_kk_ikb
-from bot import bot, prefixes, group, bot_photo, ranks
+from bot import bot, prefixes, group, bot_photo
 
 
 # 反命令提示
@@ -26,7 +25,7 @@ async def ui_g_command(_, msg):
 
 
 # 查看自己的信息
-@bot.on_message(filters.command('myinfo', prefixes) & user_in_group_on_filter)
+@bot.on_message(filters.command('my_info', prefixes) & user_in_group_on_filter)
 async def my_info(_, msg):
     await msg.delete()
     if msg.sender_chat:
@@ -38,7 +37,9 @@ async def my_info(_, msg):
 @bot.on_message(filters.command('count', prefixes) & user_in_group_on_filter & filters.private)
 async def count_info(_, msg):
     await deleteMessage(msg)
-    text = Embyservice.get_medias_count()
+    # todo
+    text = 'todo'
+    # text = Navidservice.get_medias_count()
     await sendMessage(msg, text, timer=60)
 
 
@@ -52,7 +53,7 @@ async def p_start(_, msg):
                                                 buttons=judge_group_ikb))
     try:
         u = msg.command[1].split('-')[0]
-        if u in f'{ranks.logo}' or u == str(msg.from_user.id):
+        if u in f'NAVID' or u == str(msg.from_user.id):
             await asyncio.gather(msg.delete(), rgs_code(_, msg, register_code=msg.command[1]))
         else:
             await asyncio.gather(sendMessage(msg, '🤺 你也想和bot击剑吗 ?'), msg.delete())
@@ -60,9 +61,12 @@ async def p_start(_, msg):
         if await user_in_group_filter(_, msg):
             await asyncio.gather(deleteMessage(msg),
                                  sendPhoto(msg, bot_photo,
-                                           f"**✨ 只有你想见我的时候我们的相遇才有意义**\n\n🍉__你好鸭 [{msg.from_user.first_name}](tg://user?id={msg.from_user.id}) 请选择功能__👇",
+                                           f"**✨ 悦耳的乐曲啊，你是一汪清水。**\n\n"
+                                           f"**✨ 凉爽宜人，仿佛那夜来香，**\n\n"
+                                           f"**✨ 开在一个深不可测的花瓶里，繁星满天际。**\n\n"
+                                           f"🍉__你好鸭 [{msg.from_user.first_name}](tg://user?id={msg.from_user.id}) 请选择功能__👇",
                                            buttons=judge_start_ikb(msg.from_user.id)))
-            sql_add_emby(msg.from_user.id)
+            sql_add_navid(msg.from_user.id)
 
 
 # 返回面板
@@ -71,7 +75,10 @@ async def b_start(_, call):
     if await user_in_group_filter(_, call):
         await asyncio.gather(callAnswer(call, "⭐ 返回start"),
                              editMessage(call,
-                                         text=f"**✨ 只有你想见我的时候我们的相遇才有意义**\n\n🍉__你好鸭 [{call.from_user.first_name}](tg://user?id={call.from_user.id}) 请选择功能__👇",
+                                         text=f"**✨ 悦耳的乐曲啊，你是一汪清水。**\n\n"
+                                              f"**✨ 凉爽宜人，仿佛那夜来香，**\n\n"
+                                              f"**✨ 开在一个深不可测的花瓶里，繁星满天际。**\n\n"
+                                              f"🍉__你好鸭 [{call.from_user.first_name}](tg://user?id={call.from_user.id}) 请选择功能__👇",
                                          buttons=judge_start_ikb(
                                              call.from_user.id)))
     elif not await user_in_group_filter(_, call):

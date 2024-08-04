@@ -12,7 +12,7 @@ from pyrogram.errors import BadRequest
 from bot import bot, prefixes, LOGGER, sakura_b
 from bot.func_helper.filters import admins_on_filter
 from bot.func_helper.msg_utils import sendMessage, deleteMessage
-from bot.sql_helper.sql_emby import sql_get_emby, sql_update_emby, Emby
+from bot.sql_helper.sql_navid import sql_get_navid, sql_update_navid, Navid
 from bot.func_helper.fix_bottons import group_f
 
 
@@ -44,12 +44,12 @@ async def score_user(_, msg):
         return await sendMessage(msg,
                                  "🔔 **使用格式：**[命令符]score [id] [加减分数]\n\n或回复某人[命令符]score [+/-分数] 请确认对象正确",
                                  timer=60)
-    e = sql_get_emby(tg=uid)
+    e = sql_get_navid(uid)
     if not e:
         return await sendMessage(msg, f"数据库中没有[ta](tg://user?id={uid}) 。请先私聊我", buttons=group_f)
 
     us = e.us + b
-    if sql_update_emby(Emby.tg == uid, us=us):
+    if sql_update_navid(Navid.tg == uid, us=us):
         await asyncio.gather(sendMessage(msg,
                                          f"· 🎯 {gm_name} 调节了 [{first.first_name}](tg://user?id={uid}) 积分： {b}"
                                          f"\n· 🎟️ 实时积分: **{us}**"),
@@ -68,13 +68,13 @@ async def coins_user(_, msg):
                                  "🔔 **使用格式：**[命令符]coins [id] [+/-币]\n\n或回复某人[命令符]coins [+/-币] 请确认对象正确",
                                  timer=60)
 
-    e = sql_get_emby(tg=uid)
+    e = sql_get_navid(uid)
     if not e:
         return await sendMessage(msg, f"数据库中没有[ta](tg://user?id={uid}) 。请先私聊我", buttons=group_f)
 
     # 加上判定send_chat
     us = e.iv + b
-    if sql_update_emby(Emby.tg == uid, iv=us):
+    if sql_update_navid(Navid.tg == uid, iv=us):
         await asyncio.gather(sendMessage(msg,
                                          f"· 🎯 {gm_name} 调节了 [{first.first_name}](tg://user?id={uid}) {sakura_b}： {b}"
                                          f"\n· 🎟️ 实时{sakura_b}: **{us}**"),

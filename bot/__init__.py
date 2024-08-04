@@ -1,10 +1,12 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
 from .func_helper.logger_config import logu, Now
+from pyrogram import enums
+from pyromod import Client
+from .schemas import Config
+from pyrogram.types import BotCommand
 
 LOGGER = logu(__name__)
-
-from .schemas import Config
 
 config = Config.load_config()
 
@@ -29,15 +31,13 @@ _open = config.open
 admins = config.admins
 invite = config.invite
 sakura_b = config.money
-ranks = config.ranks
 prefixes = ['/', '!', '.', '，', '。']
-schedall = config.schedall
-# emby设置
-emby_api = config.emby_api
-emby_url = config.emby_url
-emby_line = config.emby_line
-emby_block = config.emby_block
-extra_emby_libs = config.extra_emby_libs
+schedule = config.schedule
+# navid设置
+navid_admin_name = config.navid_admin_name
+navid_admin_password = config.navid_admin_password
+navid_url = config.navid_url
+navid_line = config.navid_line
 another_line = config.another_line
 # # 数据库
 db_host = config.db_host
@@ -48,7 +48,7 @@ db_port = config.db_port
 db_is_docker = config.db_is_docker
 db_docker_name = config.db_docker_name
 db_backup_dir = config.db_backup_dir
-db_backup_maxcount = config.db_backup_maxcount
+db_backup_maxcount = config.db_backup_max_count
 # 探针
 tz_ad = config.tz_ad
 tz_api = config.tz_api
@@ -61,13 +61,11 @@ fuxx_pitao = config.fuxx_pitao
 save_config()
 
 LOGGER.info("配置文件加载完毕")
-from pyrogram.types import BotCommand
 
 '''定义不同等级的人使用不同命令'''
 user_p = [
     BotCommand("start", "[私聊] 开启用户面板"),
-    BotCommand("myinfo", "[用户] 查看状态"),
-    BotCommand("count", "[用户] 媒体库数量"),
+    BotCommand("my_info", "[用户] 查看状态"),
 ]
 if not user_buy.stat:
     user_p += [BotCommand("red", "[用户/禁言] 发红包"),
@@ -77,24 +75,20 @@ admin_p = user_p + [
     BotCommand("kk", "管理用户 [管理]"),
     BotCommand("score", "加/减积分 [管理]"),
     BotCommand("coins", f"加/减{sakura_b} [管理]"),
-    BotCommand("deleted", f"清理死号 [管理]"),
-    BotCommand("kick_not_emby", f"踢出当前群内无号崽 [管理]"),
+    BotCommand("kick_not_navid", f"踢出当前群内无号崽 [管理]"),
     BotCommand("renew", "调整到期时间 [管理]"),
-    BotCommand("rmemby", "删除用户[包括非tg] [管理]"),
+    BotCommand("rm_navid", "删除用户[包括非tg] [管理]"),
     BotCommand("prouser", "增加白名单 [管理]"),
     BotCommand("revuser", "减少白名单 [管理]"),
     BotCommand("rev_white_channel", "移除皮套人白名单 [管理]"),
     BotCommand("white_channel", "添加皮套人白名单 [管理]"),
     BotCommand("unban_channel", "解封皮套人 [管理]"),
     BotCommand("syncgroupm", "消灭不在群的人 [管理]"),
-    BotCommand("syncunbound", "消灭未绑定bot的emby账户 [管理]"),
+    BotCommand("sync_unbound", "消灭未绑定bot的emby账户 [管理]"),
     BotCommand("low_activity", "手动运行活跃检测 [管理]"),
     BotCommand("check_ex", "手动到期检测 [管理]"),
-    BotCommand("uranks", "召唤观影时长榜，失效时用 [管理]"),
-    BotCommand("days_ranks", "召唤播放次数日榜，失效时用 [管理]"),
-    BotCommand("week_ranks", "召唤播放次数周榜，失效时用 [管理]"),
-    BotCommand("embyadmin", "开启emby控制台权限 [管理]"),
-    BotCommand("ucr", "私聊创建非tg的emby用户 [管理]"),
+    BotCommand("navid_admin", "开启navid控制台权限 [管理]"),
+    BotCommand("ucr", "私聊创建非tg的navid用户 [管理]"),
     BotCommand("uinfo", "查询指定用户名 [管理]"),
     BotCommand("urm", "删除指定用户名 [管理]"),
     BotCommand("restart", "重启bot [owner]"),
@@ -106,18 +100,9 @@ owner_p = admin_p + [
     BotCommand("renewall", "一键派送天数给所有未封禁的用户 [owner]"),
     BotCommand("coinsall", "一键派送币币给所有未封禁的用户 [owner]"),
     BotCommand("callall", "群发消息给每个人 [owner]"),
-    BotCommand("bindall_id", "一键更新用户们Embyid [owner]"),
     BotCommand("backup_db", "手动备份数据库[owner]"),
-    BotCommand("config", "开启bot高级控制面板 [owner]"),
-    BotCommand("embylibs_unblockall", "一键开启所有用户的媒体库 [owner]"),
-    BotCommand("embylibs_blockall", "一键关闭所有用户的媒体库 [owner]")
+    BotCommand("config", "开启bot高级控制面板 [owner]")
 ]
-if len(extra_emby_libs) > 0:
-    owner_p += [BotCommand("extraembylibs_blockall", "一键关闭所有用户的额外媒体库 [owner]"),
-                BotCommand("extraembylibs_unblockall", "一键开启所有用户的额外媒体库 [owner]")]
-
-from pyrogram import enums
-from pyromod import Client
 
 proxy = {} if not config.proxy.scheme else config.proxy.dict()
 
@@ -125,4 +110,4 @@ bot = Client(bot_name, api_id=owner_api, api_hash=owner_hash, bot_token=bot_toke
              workers=300,
              max_concurrent_transmissions=1000, parse_mode=enums.ParseMode.MARKDOWN)
 
-LOGGER.info("Clinet 客户端准备")
+LOGGER.info("client 客户端准备")

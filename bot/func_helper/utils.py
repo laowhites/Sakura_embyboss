@@ -1,8 +1,8 @@
 import pytz
 
-from bot import bot, _open, save_config, owner, admins, bot_name, ranks, schedall, group
+from bot import bot, _open, save_config, owner, admins, bot_name, schedule, group
 from bot.sql_helper.sql_code import sql_add_code
-from bot.sql_helper.sql_emby import sql_get_emby
+from bot.sql_helper.sql_navid import sql_get_navid
 from cacheout import Cache
 
 cache = Cache()
@@ -23,32 +23,32 @@ def judge_admins(uid):
 # @cache.memoize(ttl=60)
 async def members_info(tg=None, name=None):
     """
-    基础资料 - 可传递 tg,emby_name
+    基础资料 - 可传递 tg,navid_name
     :param tg: tg_id
-    :param name: emby_name
-    :return: name, lv, ex, us, embyid, pwd2
+    :param name: navid_name
+    :return: name, lv, ex, us, navid_id, pwd2
     """
     if tg is None:
         tg = name
-    data = sql_get_emby(tg)
+    data = sql_get_navid(tg)
     if data is None:
         return None
     else:
         name = data.name or '无账户信息'
         pwd2 = data.pwd2
-        embyid = data.embyid
+        navid_id = data.navid_id
         us = [data.us, data.iv]
         lv_dict = {'a': '白名单', 'b': '**正常**', 'c': '**已禁用**', 'd': '未注册'}  # , 'e': '**21天未活跃/无信息**'
         lv = lv_dict.get(data.lv, '未知')
         if lv == '白名单':
             ex = '+ ∞'
-        elif data.name is not None and schedall.low_activity and not schedall.check_ex:
+        elif data.name is not None and schedule.low_activity and not schedule.check_ex:
             ex = '__若21天无观看将封禁__'
-        elif data.name is not None and not schedall.low_activity and not schedall.check_ex:
+        elif data.name is not None and not schedule.low_activity and not schedule.check_ex:
             ex = ' __无需保号，放心食用__'
         else:
             ex = data.ex or '无账户信息'
-        return name, lv, ex, us, embyid, pwd2
+        return name, lv, ex, us, navid_id, pwd2
 
 
 async def open_check():
@@ -62,6 +62,13 @@ async def open_check():
     timing = _open.timing
     allow_code = _open.allow_code
     return open_stats, all_user, tem, timing, allow_code
+
+
+async def tem_decrease():
+    if _open.tem <= 0:
+        return
+    _open.tem = _open.tem - 1
+    save_config()
 
 
 async def tem_alluser():
@@ -85,13 +92,12 @@ async def pwd_create(length=8, chars=string.ascii_letters + string.digits):
     return ''.join([choice(chars) for i in range(length)])
 
 
-async def cr_link_one(tg: int, times, count, days: int, method: str):
+async def cr_link_one(tg: int, duration: int, count, method: str):
     """
     创建连接
     :param tg:
-    :param times:
+    :param duration:
     :param count:
-    :param days:
     :param method:
     :return:
     """
@@ -101,20 +107,20 @@ async def cr_link_one(tg: int, times, count, days: int, method: str):
     if method == 'code':
         while i <= count:
             p = await pwd_create(10)
-            uid = f'{ranks.logo}-{times}-{p}'
-            code_list.append(uid)
-            link = f'`{uid}`\n'
+            code = f'NAVID-{duration}-{p}'
+            code_list.append(code)
+            link = f'`{code}`\n'
             links += link
             i += 1
     elif method == 'link':
         while i <= count:
             p = await pwd_create(10)
-            uid = f'{ranks.logo}-{times}-{p}'
-            code_list.append(uid)
-            link = f't.me/{bot_name}?start={uid}\n'
+            code = f'NAVID-{duration}-{p}'
+            code_list.append(code)
+            link = f't.me/{bot_name}?start={code}\n'
             links += link
             i += 1
-    if sql_add_code(code_list, tg, days) is False:
+    if sql_add_code(code_list, tg, duration) is False:
         return None
     return links
 
@@ -165,7 +171,7 @@ def convert_to_beijing_time(original_date):
 
 
 @cache.memoize(ttl=300)
-async def get_users():
+async def get_tele_users():
     # 创建一个空字典来存储用户的 first_name 和 id
     members_dict = {}
     async for member in bot.get_chat_members(group[0]):
@@ -174,54 +180,3 @@ async def get_users():
         except Exception as e:
             print(f'{e} 某名bug {member}')
     return members_dict
-
-# import random
-# import grequests
-
-
-# def err_handler(request, exception):
-#     get_bot_wlc()
-
-
-# def random_shici_data(data_list, x):
-#     try:
-#         # 根据不同的url返回的数据结构，获取相应的字段
-#         if x == 0:
-#             ju, nm = data_list[0]["content"], f'{data_list[0]["author"]}《{data_list[0]["origin"]}》'
-#         elif x == 1:
-#             ju, nm = data_list[1]["hitokoto"], f'{data_list[1]["from_who"]}《{data_list[1]["from"]}》'
-#         elif x == 2:
-#             ju, nm = data_list[2]["content"], data_list[2]["source"]
-#             # 如果没有作者信息，就不显示
-#         return ju, nm
-#     except:
-#         return False
-
-
-# # 请求每日诗词
-# def get_bot_shici():
-#     try:
-#         urls = ['https://v1.jinrishici.com/all.json', 'https://international.v1.hitokoto.cn/?c=i',
-#                 'http://yijuzhan.com/api/word.php?m=json']
-#         reqs = [grequests.get(url) for url in urls]
-#         res_list = grequests.map(reqs)  # exception_handler=err_handler
-#         data_list = [res.json() for res in res_list]
-#         # print(data_list)
-#         seq = [0, 1, 2]
-#         x = random.choice(seq)
-#         seq.remove(x)
-#         e = random.choice(seq)
-#         ju, nm = random_shici_data(data_list, x=x)
-#         e_ju, e_nm = random_shici_data(data_list, x=e)
-#         e_ju = random.sample(e_ju, 6)
-#         T = ju
-#         t = random.sample(ju, 2)
-#         e_ju.extend(t)
-#         random.shuffle(e_ju)
-#         for i in t:
-#             ju = ju.replace(i, '░')  # ░
-#         print(T, e_ju, ju, nm)
-#         return T, e_ju, ju, nm
-#     except Exception as e:
-#         print(e)
-#         # await get_bot_shici()
