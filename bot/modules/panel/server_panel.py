@@ -4,17 +4,17 @@
 """
 from datetime import datetime, timezone, timedelta
 from pyrogram import filters
-from bot import bot, emby_line
-from bot.func_helper.emby import emby
+from bot import bot, navid_line
+from bot.func_helper.navid import navidService
 from bot.func_helper.filters import user_in_group_on_filter
-from bot.sql_helper.sql_emby import sql_get_emby
+from bot.sql_helper.sql_navid import sql_get_navid
 from bot.func_helper.fix_bottons import cr_page_server
 from bot.func_helper.msg_utils import callAnswer, editMessage
 
 
 @bot.on_callback_query(filters.regex('server') & user_in_group_on_filter)
 async def server(_, call):
-    data = sql_get_emby(tg=call.from_user.id)
+    data = sql_get_navid(call.from_user.id)
     if not data:
         return await editMessage(call, '⚠️ 数据库没有你，请重新 /start录入')
     await callAnswer(call, '🌐查询中...')
@@ -33,14 +33,10 @@ async def server(_, call):
         server_info = ''.join([item['server'] for item in sever if item['id'] == j])
 
     pwd = '空' if not data.pwd else data.pwd
-    line = f'{emby_line}' if data.lv in ['a', 'b'] else ' - **无权查看**'
-    try:
-        online = emby.get_current_playing_count()
-    except:
-        online = 'Emby服务器断连 ·0'
+    line = f'{navid_line}' if data.lv in ['a', 'b'] else ' - **无权查看**'
+
     text = f'**▎↓目前线路 & 用户密码：**`{pwd}`\n' \
            f'{line}\n\n' \
            f'{server_info}' \
-           f'· 🎬 在线 | **{online}** 人\n\n' \
            f'**· 🌏 [{(datetime.now(timezone(timedelta(hours=8)))).strftime("%Y-%m-%d %H:%M:%S")}]**'
     await editMessage(call, text, buttons=keyboard)

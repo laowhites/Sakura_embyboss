@@ -4,11 +4,11 @@ from pyrogram import filters
 from pyrogram.errors import BadRequest
 
 from bot import bot, prefixes, LOGGER
-from bot.func_helper.emby import emby
+from bot.func_helper.navid import navidService
 from bot.func_helper.filters import admins_on_filter
 from bot.func_helper.msg_utils import deleteMessage, sendMessage
-from bot.sql_helper.sql_emby import sql_get_emby, sql_update_emby, Emby
-from bot.sql_helper.sql_emby2 import sql_get_emby2, sql_update_emby2, Emby2
+from bot.sql_helper.sql_navid import sql_get_navid, sql_update_navid, Navid
+from bot.sql_helper.sql_navid2 import sql_get_navid2, sql_update_navid2, Navid2
 
 
 async def get_user_input(msg):
@@ -27,62 +27,61 @@ async def get_user_input(msg):
         except (IndexError, KeyError, BadRequest, ValueError, AttributeError):
             return None, None, None, None
 
-    e = sql_get_emby(tg=b)
-    stats = None
-    if not e:
-        e2 = sql_get_emby2(name=b)
-        if not e2:
-            await sendMessage(msg, f"♻️ 未检索到Emby {b}，请确认重试或手动检查。")
+    navid = sql_get_navid(b)
+    unbound = False
+    if not navid:
+        navid = sql_get_navid2(name=b)
+        if not navid:
+            await sendMessage(msg, f"♻️ 未检索到navid {b}，请确认重试或手动检查。")
             return None, None, None, None
-        e = e2
-        stats = 1
+        unbound = True
 
-    return c, e, stats, gm_name
+    return c, navid, unbound, gm_name
 
 
 @bot.on_message(filters.command('renew', prefixes) & admins_on_filter)
 async def renew_user(_, msg):
-    days, e, stats, gm_name = await get_user_input(msg)
-    if not e:
+    days, navid, unbound, gm_name = await get_user_input(msg)
+    if not navid:
         return await sendMessage(msg,
-                                 f"🔔 **使用格式：**\n\n/renew [Emby账户名] [+/-天数]\n或回复某人 /renew [+/-天数]",
+                                 f"🔔 **使用格式：**\n\n/renew [navid账户名] [+/-天数]\n或回复某人 /renew [+/-天数]",
                                  timer=60)
     reply = await msg.reply(f"🍓 正在处理ing···/·")
     try:
-        name = f'[{e.name}]({e.tg})' if e.tg else e.name
+        name = f'[{navid.name}]({navid.tg})' if navid.tg else navid.name
     except:
-        name = e.name
+        name = navid.name
     # 时间是 utc 来算的
     Now = datetime.now()
-    ex_new = Now + timedelta(days=days) if Now > e.ex else e.ex + timedelta(days=days)
-    lv = e.lv
+    ex_new = Now + timedelta(days=days) if Now > navid.ex else navid.ex + timedelta(days=days)
+    lv = navid.lv
     # 无脑 允许播放
     if ex_new > Now:
-        lv = 'a' if e.lv == 'a' else 'b'
-        await emby.emby_change_policy(e.embyid, method=False)
+        lv = 'a' if navid.lv == 'a' else 'b'
+        await navidService.navid_change_policy(navid.navid_id, active=True)
 
     # 没有白名单就寄
     elif ex_new < Now:
-        if e.lv == 'a':
+        if navid.lv == 'a':
             pass
         else:
             lv = 'c'
-            await emby.emby_change_policy(e.embyid, method=True)
+            await navidService.navid_change_policy(navid.navid_id, method=False)
 
-    if stats == 1:
+    if unbound == 1:
         expired = 1 if lv == 'c' else 0
-        sql_update_emby2(Emby2.embyid == e.embyid, ex=ex_new, expired=expired)
+        sql_update_navid2(Navid2.navid_id == navid.navid_id, ex=ex_new, expired=expired)
     else:
-        sql_update_emby(Emby.tg == e.tg, ex=ex_new, lv=lv)
+        sql_update_navid(Navid.tg == navid.tg, ex=ex_new, lv=lv)
 
     i = await reply.edit(
-        f'🍒 __ {gm_name} 已调整 emby 用户 {name} 到期时间 {days} 天 (以当前时间计)__'
+        f'🍒 __ {gm_name} 已调整 navid 用户 {name} 到期时间 {days} 天 (以当前时间计)__'
         f'\n📅 实时到期：{ex_new.strftime("%Y-%m-%d %H:%M:%S")}')
     try:
-        await i.forward(e.tg)
+        await i.forward(navid.tg)
     except:
         pass
 
     LOGGER.info(
-        f"【admin】[renew]：{gm_name} 对 emby账户 {name} 调节 {days} 天，"
+        f"【admin】[renew]：{gm_name} 对 navid账户 {name} 调节 {days} 天，"
         f"实时到期：{ex_new.strftime('%Y-%m-%d %H:%M:%S')}")

@@ -45,28 +45,3 @@ def sever_info(tz, tz_api, tz_id):
         return b
     except:
         return None
-    # """交换区"""
-    # # SwapTotal = humanize.naturalsize(detail['host']['SwapTotal'], gnu=True)                                                                                              'MemTotal'] != 0 else "0"
-    # # SwapUsed = humanize.naturalsize(detail['status']['SwapUsed'], gnu=True)
-    # # Swapercent = f"{(detail['status']['SwapUsed'] / detail['host']['SwapTotal']) * 100:.2f}" if detail['host']['SwapTotal'] != 0 else "0"
-    #
-    # """硬盘"""
-    # # DiskTotal = humanize.naturalsize(detail['host']['DiskTotal'], gnu=True)
-    # # DiskUsed = humanize.naturalsize(detail['status']['DiskUsed'], gnu=True)
-    # # Diskpercent = f"{(detail['status']['DiskUsed'] / detail['host']['DiskTotal']) * 100:.2f}" if detail['host']['DiskTotal'] != 0 else "0"
-    #
-    #
-    # """负载"""
-    # # Load1 = f"{detail['status']['Load1']:.2f}"
-    # # Load5 = f"{detail['status']['Load1']:.2f}"
-    # # Load15 = f"{detail['status']['Load1']:.2f}"
-    #
-
-    # # f"CPU {CPU}% [{detail['host']['Arch']}]\n" \
-    # # f"负载 {Load1} {Load5} {Load15}\n" \
-    # f"交换 {Swapercent}% [{SwapUsed}/{SwapTotal}]\n" \
-    # f"硬盘 {Diskpercent}% [{DiskUsed}/{DiskTotal}]\n" \
-
-# if __name__ == "__main__":
-#     status_msg = sever_info(tz='', tz_api='',
-#                             tz_id=['5', '6', '7'])

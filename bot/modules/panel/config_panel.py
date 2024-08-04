@@ -1,7 +1,7 @@
 """
 可调节设置
 此处为控制面板2，主要是为了在bot中能够设置一些变量
-部分目前有 导出日志，更改探针，更改emby线路，设置购买按钮
+部分目前有 导出日志，更改探针，更改navid线路，设置购买按钮
 
 """
 from bot import bot, prefixes, bot_photo, Now, LOGGER, config, save_config, _open, user_buy
@@ -75,9 +75,9 @@ async def set_tz(_, call):
 # 设置 emby 线路
 @bot.on_callback_query(filters.regex('set_line') & admins_on_filter)
 async def set_emby_line(_, call):
-    await callAnswer(call, '📌 设置emby线路')
+    await callAnswer(call, '📌 设置navid线路')
     send = await editMessage(call,
-                             "💘【设置线路】\n\n对我发送向emby用户展示的emby地址吧\n取消点击 /cancel")
+                             "💘【设置线路】\n\n对我发送向navid用户展示的navid地址吧\n取消点击 /cancel")
     if send is False:
         return
 
@@ -90,11 +90,11 @@ async def set_emby_line(_, call):
         await editMessage(call, '__您已经取消输入__ **会话已结束！**', buttons=back_set_ikb('set_line'))
     else:
         await txt.delete()
-        config.emby_line = txt.text
+        config.navid_line = txt.text
         save_config()
-        await editMessage(call, f"**【网址样式】:** \n\n{config.emby_line}\n\n设置完成！done！",
+        await editMessage(call, f"**【网址样式】:** \n\n{config.navid_line}\n\n设置完成！done！",
                           buttons=back_config_p_ikb)
-        LOGGER.info(f"【admin】：{call.from_user.id} - 更新emby线路为{config.emby_line}设置完成")
+        LOGGER.info(f"【admin】：{call.from_user.id} - 更新navid线路为{config.navid_line}设置完成")
 
 
 # 设置需要显示/隐藏的库
@@ -174,10 +174,10 @@ async def set_buy(_, call):
 async def open_allow_code(_, call):
     if _open.allow_code:
         _open.allow_code = False
-        await callAnswer(call, '**👮🏻‍♂️ 您已调整 注册码续期 Falese（关闭）**', True)
+        await callAnswer(call, '**👮🏻‍♂️ 您已调整 注册码续期 False（关闭）**', True)
         await config_p_re(_, call)
         save_config()
-        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 注册码续期 Falese")
+        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 注册码续期 False")
     elif not _open.allow_code:
         _open.allow_code = True
         await callAnswer(call, '**👮🏻‍♂️ 您已调整 注册码续期 True（开启）**', True)
@@ -190,16 +190,16 @@ async def open_allow_code(_, call):
 async def open_leave_ban(_, call):
     if _open.leave_ban:
         _open.leave_ban = False
-        await callAnswer(call, '**👮🏻‍♂️ 您已关闭 退群封禁，用户退群bot将不会被封印了**', True)
+        await callAnswer(call, '**👮🏻‍♂️ 您已关闭 退群删号，用户退群bot将不会被封印了**', True)
         await config_p_re(_, call)
         save_config()
-        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 退群封禁设置 Falese")
+        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 退群删号设置 False")
     elif not _open.leave_ban:
         _open.leave_ban = True
-        await callAnswer(call, '**👮🏻‍♂️ 您已开启 退群封禁，用户退群bot将会被封印，禁止入群**', True)
+        await callAnswer(call, '**👮🏻‍♂️ 您已开启 退群删号，用户退群bot将会被封印，禁止入群**', True)
         await config_p_re(_, call)
         save_config()
-        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 退群封禁设置 True")
+        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 退群删号设置 True")
 
 
 @bot.on_callback_query(filters.regex('set_uplays') & admins_on_filter)
@@ -209,7 +209,7 @@ async def open_leave_ban(_, call):
         await callAnswer(call, '**👮🏻‍♂️ 您已关闭 看片榜结算，自动召唤看片榜将不被计算积分**', True)
         await config_p_re(_, call)
         save_config()
-        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 看片榜结算 Falese")
+        LOGGER.info(f"【admin】：管理员 {call.from_user.first_name} 已调整 看片榜结算 False")
     elif not _open.uplays:
         _open.uplays = True
         await callAnswer(call, '**👮🏻‍♂️ 您已开启 看片榜结算，自动召唤看片榜将会被计算积分**', True)

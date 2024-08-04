@@ -11,7 +11,7 @@ from pyrogram.errors import FloodWait
 from bot import bot, prefixes, bot_photo, LOGGER, sakura_b
 from bot.func_helper.msg_utils import sendMessage, deleteMessage, ask_return
 from bot.func_helper.filters import admins_on_filter
-from bot.sql_helper.sql_emby import get_all_emby, Emby, sql_update_embys
+from bot.sql_helper.sql_navid import get_all_navid, Navid, sql_update_navids
 
 
 @bot.on_message(filters.command('renewall', prefixes) & admins_on_filter)
@@ -25,7 +25,7 @@ async def renew_all(_, msg):
                                  "🔔 **使用格式：**/renewall [+/-天数]\n\n  给所有未封禁emby [+/-天数]", timer=60)
 
     send = await bot.send_photo(msg.chat.id, photo=bot_photo, caption="⚡【派送任务】\n  **正在开启派送中...请稍后**")
-    rst = get_all_emby(Emby.lv == 'b')
+    rst = get_all_navid(Navid.lv == 'b')
     if rst is None:
         LOGGER.info(
             f"【派送任务】 -{msg.from_user.first_name}({msg.from_user.id}) 没有检测到任何emby账户，结束")
@@ -38,7 +38,7 @@ async def renew_all(_, msg):
         b += 1
         ex_new = i.ex + timedelta(days=a)
         ls.append([i.tg, ex_new])
-    if sql_update_embys(some_list=ls, method='ex'):
+    if sql_update_navids(some_list=ls, method='ex'):
         end = time.perf_counter()
         times = end - start
         await send.edit(
@@ -65,7 +65,7 @@ async def coins_all(_, msg):
                                  f"🔔 **使用格式：**/coinsall [+/-数量]\n\n  给所有未封禁emby [+/- {sakura_b}]", timer=60)
     send = await bot.send_photo(msg.chat.id, photo=bot_photo,
                                 caption=f"⚡【{sakura_b}任务】\n  **正在开启派送{sakura_b}中...请稍后**")
-    rst = get_all_emby(Emby.lv == 'b')
+    rst = get_all_navid(Navid.lv == 'b')
     if rst is None:
         LOGGER.info(
             f"【{sakura_b}任务】 -{msg.from_user.first_name}({msg.from_user.id}) 没有检测到任何emby账户，结束")
@@ -78,7 +78,7 @@ async def coins_all(_, msg):
         b += 1
         iv_new = i.iv + a
         ls.append([i.tg, iv_new])
-    if sql_update_embys(some_list=ls, method='iv'):
+    if sql_update_navids(some_list=ls, method='iv'):
         end = time.perf_counter()
         times = end - start
         await send.edit(
@@ -114,9 +114,9 @@ async def call_all(_, msg):
     if call.text == '/cancel':
         return await msg.reply('好的,您已取消操作.')
     elif call.text == '2':
-        chat_members = get_all_emby(Emby.tg is not None)
+        chat_members = get_all_navid(Navid.tg is not None)
     elif call.text == '1':
-        chat_members = get_all_emby(Emby.embyid is not None)
+        chat_members = get_all_navid(Navid.navid_id is not None)
     reply = await msg.reply('开始执行发送......')
     a = 0
     start = time.perf_counter()

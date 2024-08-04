@@ -44,6 +44,7 @@ class Open(BaseModel):
         return v
 
     checkin: bool
+    checkin_duration: int
     exchange: bool
     whitelist: bool
     invite: bool
@@ -59,32 +60,15 @@ class Open(BaseModel):
         self.timing = 0
 
 
-class Ranks(BaseModel):
-    logo: str = "SAKURA"
-    backdrop: bool = False
-
-
-class Schedall(BaseModel):
-    dayrank: bool = True
-    weekrank: bool = True
-    dayplayrank: bool = False
-    weekplayrank: bool = True
+class Schedule(BaseModel):
     check_ex: bool = True
     low_activity: bool = False
-    day_ranks_message_id: int = 0
-    week_ranks_message_id: int = 0
     restart_chat_id: int = 0
     restart_msg_id: int = 0
     backup_db: bool = True
 
     def __init__(self, **data):
         super().__init__(**data)
-        if self.day_ranks_message_id == 0 or self.week_ranks_message_id == 0:
-            if os.path.exists("log/rank.json"):
-                with open("log/rank.json", "r") as f:
-                    i = json.load(f)
-                    self.day_ranks_message_id = i.get("day_ranks_message_id", 0)
-                    self.week_ranks_message_id = i.get("week_ranks_message_id", 0)
 
 
 class Proxy(BaseModel):
@@ -110,25 +94,23 @@ class Config(BaseModel):
     admins: Optional[List[int]] = []
     invite: str
     money: str
-    emby_api: str
-    emby_url: str
-    emby_block: Optional[List[str]] = []
-    emby_line: str
-    extra_emby_libs: Optional[List[str]] = []
+    navid_admin_name: str
+    navid_admin_password: str
+    navid_url: str
+    navid_line: str
     db_host: str
     db_user: str
     db_pwd: str
     db_name: str
-    db_port: int = 3306
+    db_port: int
     tz_ad: Optional[str] = None
     tz_api: Optional[str] = None
     tz_id: Optional[List[int]] = []
-    ranks: Ranks
-    schedall: Schedall
+    schedule: Schedule
     db_is_docker: bool = False
     db_docker_name: str = "mysql"
     db_backup_dir: str = "./db_backup"
-    db_backup_maxcount: int = 7
+    db_backup_max_count: int = 7
     another_line: Optional[List[str]] = []
     # 如果使用的是 Python 3.10+ ，|运算符能用
     # w_anti_channel_ids: Optional[List[str | int]] = []
