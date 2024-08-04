@@ -7,10 +7,11 @@ services:
     container_name: mysql # 容器名
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci # 设置utf8字符集
     restart: always
-    network_mode: bridge
+    networks:
+      - navid_net
     environment:
       MYSQL_ROOT_PASSWORD: 123456 # root管理员用户密码
-      MYSQL_USER: susu   # 创建需要连接的用户
+      MYSQL_USER: dog   # 创建需要连接的用户
       MYSQL_DATABASE: navid # 数据库名字
       MYSQL_PASSWORD: 1234  # 设置普通用户的密码
       MYSQL_ROOT_HOST: "%" # 所有ip可连接
@@ -35,10 +36,23 @@ services:
   #      - mysql
 
   navidBoss:
-    image: baisansui/navidrome_bot:latest
+    image: navidrome_bot:0.0.1
     container_name: navid_bot
     restart: always
-    network_mode: bridge
+    environment:
+      - HTTP_PROXY=http://localhost:8118
+      - HTTPS_PROXY=https://localhost:8118
+      - NO_PROXY=localhost,127.0.0.1,db,emby2.lilyya.xyz
+      - SOCKS5_PROXY=socks5://localhost:8119
+    networks:
+      - navid_net
     volumes:
       - ./config.json:/app/config.json
       - ./log:/app/log
+    depends_on:
+      - mysql
+
+
+networks:
+  navid_net:
+    driver: bridge
