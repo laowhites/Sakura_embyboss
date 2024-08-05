@@ -134,7 +134,7 @@ class NavidService:
                 return True
         return False
 
-    async def navid_reset(self, id, new=None):
+    async def navid_reset(self, navid_id, new=None, persistence=True):
         if self.token_touch + timedelta(hours=12) < datetime.now():
             await self.refresh_token()
         """
@@ -146,17 +146,19 @@ class NavidService:
         :param new: new_pwd
         :return: bool
         """
-        res = r.get(f'{self.url}/api/user/{id}', headers=self.headers)
+        res = r.get(f'{self.url}/api/user/{navid_id}', headers=self.headers)
         if res.status_code != 200:
             logging.error("管理员账户查询用户信息失败")
             return False
         info = res.json()
         info["password"] = new
-        res = r.put(f'{self.url}/api/user/{id}', json=info, headers=self.headers)
+        res = r.put(f'{self.url}/api/user/{navid_id}', json=info, headers=self.headers)
         if res.status_code != 200:
             return False
-        if sql_update_navid(Navid.navid_id == id, pwd=new) is True:
+
+        if not persistence:
             return True
+        return sql_update_navid(Navid.navid_id == navid_id, pwd=new)
 
     async def authority_account(self, tg, username, password=None):
         if self.token_touch + timedelta(hours=12) < datetime.now():
@@ -208,13 +210,13 @@ class NavidService:
             await self.refresh_token()
         if not active:
             pwd = await pwd_create(8)
-            await self.navid_reset(navid_id, pwd)
+            await self.navid_reset(navid_id, pwd, False)
         else:
             navid = sql_get_navid(navid_id)
             if not navid:
                 logging.error("未查询到用户信息")
                 return
-            await self.navid_reset(navid_id, navid.pwd)
+            await self.navid_reset(navid_id, navid.pwd, False)
 
     """
     修改用户管理权限

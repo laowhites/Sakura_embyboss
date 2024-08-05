@@ -134,7 +134,7 @@ async def check_expired():
             delta = c.ex + timedelta(days=5)
             if datetime.now() < delta:
                 continue
-            if await navidService.navid_del(c.navid_id):
+            if await navidService.navid_del(navid_id=c.navid_id):
                 text = f'【到期检测】\n#id{c.tg} 删除账户 [{c.name}](tg://user?id={c.tg})\n已到期 5 天，执行清除任务。期待下次与你相遇'
                 LOGGER.info(text)
             else:
@@ -155,7 +155,7 @@ async def check_expired():
     if rseired is None:
         return LOGGER.info(f'【封禁检测】- navid2 无数据，跳过')
     for e in rseired:
-        if await navidService.navid_change_policy(id=e.navid_id, method=False):
+        if await navidService.navid_del(navid_id=e.navid_id, unbound=True):
             if sql_update_navid2(Navid2.navid_id == e.navid_id, expired=1):
                 text = f"【封禁检测】- 到期封印非TG账户 [{e.name}](google.com?q={e.navid_id}) Done！"
                 LOGGER.info(text)

@@ -435,7 +435,7 @@ async def reset(_, call):
                 elif mima.text == '/cancel':
                     await mima.delete()
                     await editMessage(call, '**🎯 收到，正在重置ing。。。**')
-                    if await navidService.navid_reset(id=e.navid_id) is True:
+                    if await navidService.navid_reset(navid_id=e.navid_id) is True:
                         await editMessage(call, '🕶️ 操作完成！已为您重置密码为 空。', buttons=back_members_ikb)
                         LOGGER.info(f"【重置密码】：{call.from_user.id} 成功重置了空密码！")
                     else:
@@ -445,7 +445,7 @@ async def reset(_, call):
                 else:
                     await mima.delete()
                     await editMessage(call, '**🎯 收到，正在重置ing。。。**')
-                    if await navidService.navid_reset(id=e.navid_id, new=mima.text) is True:
+                    if await navidService.navid_reset(navid_id=e.navid_id, new=mima.text) is True:
                         await editMessage(call, f'🕶️ 操作完成！已为您重置密码为 `{mima.text}`。',
                                           buttons=back_members_ikb)
                         LOGGER.info(f"【重置密码】：{call.from_user.id} 成功重置了密码为 {mima.text} ！")
