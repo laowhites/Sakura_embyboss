@@ -1,5 +1,4 @@
 #（此处请注意，拉取的镜像仅适用于arm架构，amd请注意修改配置包括但不仅限于镜像等）
-version: '3'
 services:
   mysql:
     image: mysql:8.4.2-oraclelinux9
@@ -11,8 +10,8 @@ services:
       - navid_net
     environment:
       MYSQL_ROOT_PASSWORD: 123456 # root管理员用户密码
-      MYSQL_USER: dog   # 创建需要连接的用户
       MYSQL_DATABASE: navid # 数据库名字
+      MYSQL_USER: dog   # 创建需要连接的用户
       MYSQL_PASSWORD: 1234  # 设置普通用户的密码
       MYSQL_ROOT_HOST: "%" # 所有ip可连接
       TZ: Asia/Shanghai
@@ -40,10 +39,10 @@ services:
     container_name: navid_bot
     restart: always
     environment:
-      - HTTP_PROXY=http://localhost:8118
-      - HTTPS_PROXY=https://localhost:8118
+      - HTTP_PROXY=http://host.docker.internal:7890
+      - HTTPS_PROXY=https://host.docker.internal:7890
       - NO_PROXY=localhost,127.0.0.1,db,emby2.lilyya.xyz
-      - SOCKS5_PROXY=socks5://localhost:8119
+      - SOCKS5_PROXY=socks5://host.docker.internal:7890
     networks:
       - navid_net
     volumes:

@@ -109,7 +109,7 @@ class Config(BaseModel):
     tz_id: Optional[List[int]] = []
     schedule: Schedule
     db_is_docker: bool = False
-    db_docker_name: str = "mysql"
+    db_docker_name: str
     db_backup_dir: str = "./db_backup"
     db_backup_max_count: int = 7
     another_line: Optional[List[str]] = []

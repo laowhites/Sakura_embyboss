@@ -41,7 +41,6 @@ class NavidService:
         self.token_touch = datetime.now()
         self.fetch_token(self)
         self.headers["x-nd-client-unique-id"] = 'navid-admin';
-        self.headers["x-nd-authorization"] = f'Bearer {self.token}';
 
     @staticmethod
     def fetch_token(self):
@@ -50,14 +49,14 @@ class NavidService:
                            headers=self.headers,
                            json=name_data)
         if login_res.status_code == 200:
-            self.token = login_res.json()['token']
+            self.headers["x-nd-authorization"] = f'Bearer {login_res.json()["token"]}';
             return
         logging.error("管理员token获取失败")
 
     async def navid_create(self, tg: int, name, pwd2, us: int, stats):
 
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            self.fetch_token(self)
         """
         创建账户
         :param tg: tg_id
@@ -108,7 +107,7 @@ class NavidService:
 
     async def navid_del(self, tg, navid_id, unbound=False):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            await self.fetch_token(self)
         """
         删除navid账户
         :param tg: tele id
@@ -136,7 +135,7 @@ class NavidService:
 
     async def navid_reset(self, navid_id, new=None, persistence=True):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            await self.fetch_token(self)
         """
         重置密码
         step：
@@ -162,7 +161,7 @@ class NavidService:
 
     async def authority_account(self, tg, username, password=None):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            await self.fetch_token(self)
         data = ({"username": username, "password": password})
         res = r.post(f'{self.url}/auth/login',
                      headers=self.headers,
@@ -174,7 +173,7 @@ class NavidService:
 
     async def users(self):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            await self.fetch_token(self)
         try:
             _url = f"{self.url}/api/user"
             resp = r.get(_url, headers=self.headers)
@@ -186,7 +185,7 @@ class NavidService:
 
     def user(self, navid_id):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            self.refresh_token()
+            self.fetch_token(self)
         """
         通过id查看该账户配置信息
         :param navid_id:
@@ -207,7 +206,7 @@ class NavidService:
 
     async def navid_change_policy(self, navid_id, active=False):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            await self.fetch_token(self)
         if not active:
             pwd = await pwd_create(8)
             await self.navid_reset(navid_id, pwd, False)
@@ -224,7 +223,7 @@ class NavidService:
 
     async def navid_admin(self, navid_id, admin=False):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            await self.fetch_token(self)
         navid = self.query_user(navid_id)
         if not navid:
             return False
@@ -239,7 +238,7 @@ class NavidService:
 
     async def query_user(self, navid_id: str):
         if self.token_touch + timedelta(hours=12) < datetime.now():
-            await self.refresh_token()
+            await self.fetch_token(self)
         """
         查询用户信息
        """
@@ -248,9 +247,6 @@ class NavidService:
         if res.status_code != 200:
             return res.json()
         return None
-
-    async def refresh_token(self):
-        self.fetch_token(self)
 
 
 # 实例

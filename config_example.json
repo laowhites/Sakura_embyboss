@@ -66,8 +66,8 @@
   "w_anti_channel_ids": [],
   "proxy": {
     "scheme": "socks5",
-    "hostname": "127.0.0.1",
-    "port": 8119,
+    "hostname": "host.docker.internal",
+    "port": 7890,
     "username": "",
     "password": ""
   },
