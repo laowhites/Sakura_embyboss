@@ -1,0 +1,76 @@
+{
+  "bot_name": "timedogbot",
+  "bot_token": "7267241420:AAEF-rJ9Lzymb5hconN4al6Xlttqya4qmfk",
+  "owner_api": 26466219,
+  "owner_hash": "29dd69c51db2c8ca1697620aafb4adc0",
+  "owner": 5020064070,
+  "group": [
+    -1002189347582
+  ],
+  "main_group": "+SsIuvm17TMliYzU1",
+  "chanel": "",
+  "bot_photo": "https://telegra.ph/file/ac9f9abad364742881a7c.png",
+  "user_buy": {
+    "stat": true,
+    "text": false,
+    "button": [
+      "💰 点击购买",
+      "https://google.com",
+      "url"
+    ]
+  },
+  "open": {
+    "stat": false,
+    "all_user": 1000,
+    "timing": 0,
+    "tem": 0,
+    "allow_code": true,
+    "checkin": true,
+    "checkin_duration": 15,
+    "exchange": true,
+    "whitelist": true,
+    "invite": false,
+    "leave_ban": false,
+    "uplays": true,
+    "exchange_cost": 300,
+    "whitelist_cost": 9999,
+    "invite_cost": 1000
+  },
+  "admins": [],
+  "invite": "n",
+  "money": "花币",
+  "navid_admin_name": "123456",
+  "navid_admin_password": "654321",
+  "navid_url": "http://emby2.lilyya.xyz:4533",
+  "navid_line": "emby2.lilyya.xyz",
+  "db_host": "127.0.0.1",
+  "db_user": "root",
+  "db_pwd": "123456",
+  "db_name": "navid",
+  "db_port": 3307,
+  "tz_ad": "",
+  "tz_api": "",
+  "tz_id": [],
+  "schedule": {
+    "check_ex": true,
+    "low_activity": false,
+    "restart_chat_id": 0,
+    "restart_msg_id": 0,
+    "backup_db": false
+  },
+  "db_is_docker": true,
+  "db_docker_name": "mysql",
+  "db_backup_dir": "./db_backup",
+  "db_backup_max_count": 7,
+  "another_line": [],
+  "w_anti_channel_ids": [],
+  "proxy": {
+    "scheme": "socks5",
+    "hostname": "127.0.0.1",
+    "port": 8119,
+    "username": "",
+    "password": ""
+  },
+  "kk_gift_days": 30,
+  "fuxx_pitao": true
+}
